@@ -1,0 +1,10 @@
+../Src/main.cpp:20:5:int main()	8	static
+../Src/main.cpp:34:6:void USARTInit()	8	static
+../Src/main.cpp:39:6:void systemStatusTimerInit()	8	static
+../Src/main.cpp:54:6:void GPIOInit()	16	static
+../Src/main.cpp:66:6:void TIM9_UpdateCallback()	8	static
+../Src/main.cpp:71:6:void USART2_RX_Callback()	16	static
+../Src/main.cpp:77:6:void fpuInit()	4	static
+../Src/main.cpp:81:1:void __static_initialization_and_destruction_0(int, int)	16	static
+../Src/main.cpp:81:1:cpp)	8	static
+../Src/main.cpp:81:1:cpp)	8	static

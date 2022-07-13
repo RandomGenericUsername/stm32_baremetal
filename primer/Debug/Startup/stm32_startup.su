@@ -1,0 +1,2 @@
+../Startup/stm32_startup.cpp:179:6:void Reset_Handler()	24	static
+../Startup/stm32_startup.cpp:204:6:void Default_Handler()	4	static

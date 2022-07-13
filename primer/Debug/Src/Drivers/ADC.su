@@ -1,0 +1,3 @@
+../Src/Drivers/ADC.cpp:3:1:adcNameSpace::_ADC_::_ADC_(ADC_TypeDef*)	16	static
+../Src/Drivers/ADC.cpp:9:1:adcNameSpace::_ADC_::~_ADC_()	16	static
+../Src/Drivers/ADC.cpp:14:6:void adcNameSpace::ADC_PARAMETERS::singleChannelSamplingTime(uint32_t, uint32_t)	32	static

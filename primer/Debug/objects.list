@@ -1,0 +1,10 @@
+"./Src/main.o"
+"./Src/syscalls.o"
+"./Startup/stm32_startup.o"
+"./Src/Drivers/GPIO.o"
+"./Src/Drivers/basicTimer.o"
+"./Src/Drivers/USART.o"
+"./Src/Drivers/ADC.o"
+"./Src/Classes/Vector.o"
+
+
