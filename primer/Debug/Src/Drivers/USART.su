@@ -1,33 +1,38 @@
 ../Inc/Drivers/CMSIS/Include/core_cm4.h:1688:22:void __NVIC_EnableIRQ(IRQn_Type)	16	static
 ../Inc/Drivers/CMSIS/Include/core_cm4.h:1724:22:void __NVIC_DisableIRQ(IRQn_Type)	16	static
 ../Inc/Drivers/CMSIS/Include/core_cm4.h:1816:22:void __NVIC_SetPriority(IRQn_Type, uint32_t)	16	static
-../Src/Drivers/USART.cpp:26:1:usartNameSpace::USART::USART(USART_TypeDef*)	24	static
-../Src/Drivers/USART.cpp:37:1:usartNameSpace::USART::~USART()	16	static
-../Src/Drivers/USART.cpp:43:28:defsNameSpace::TASK_STATUS usartNameSpace::USART::init()	16	static
-../Src/Drivers/USART.cpp:67:28:defsNameSpace::TASK_STATUS usartNameSpace::USART::deInit()	16	static
-../Src/Drivers/USART.cpp:71:6:void usartNameSpace::USART::peripheralClockEnable()	16	static
-../Src/Drivers/USART.cpp:89:6:void usartNameSpace::USART::setStopBits()	16	static
-../Src/Drivers/USART.cpp:93:6:void usartNameSpace::USART::setParityConfig()	16	static
-../Src/Drivers/USART.cpp:101:6:void usartNameSpace::USART::setBRRConfig()	16	static
-../Src/Drivers/USART.cpp:109:6:void usartNameSpace::USART::setInterrupts()	16	static
-../Src/Drivers/USART.cpp:122:6:void usartNameSpace::USART::setOverSampling()	16	static
-../Src/Drivers/USART.cpp:127:6:void usartNameSpace::USART::setDataLength()	16	static
-../Src/Drivers/USART.cpp:132:6:void usartNameSpace::USART::set_TX_RX_mode()	16	static
-../Src/Drivers/USART.cpp:144:6:void usartNameSpace::USART::gpioConfig()	128	static
-../Src/Drivers/USART.cpp:270:6:void usartNameSpace::USART::enableNVIC_Interrupt()	24	static
-../Src/Drivers/USART.cpp:296:6:void usartNameSpace::USART::disableNVIC_Interrupt()	24	static
-../Src/Drivers/USART.cpp:314:6:void usartNameSpace::USART::calculateMantisaAndFractionalPart(double, uint8_t, usartNameSpace::USART_BAUD_RATES, usartNameSpace::BRR_VALUES&)	96	static
-../Src/Drivers/USART.cpp:339:6:void usartNameSpace::USART::USART_enable()	16	static
-../Src/Drivers/USART.cpp:344:6:void usartNameSpace::USART::USART_disable()	16	static
-../Src/Drivers/USART.cpp:353:6:void usartNameSpace::USART::writeCharBlockingMode(char)	16	static
-../Src/Drivers/USART.cpp:362:6:void usartNameSpace::USART::writeStringBlockingMode(char*)	16	static
-../Src/Drivers/USART.cpp:370:6:char usartNameSpace::USART::readCharBlockingMode()	16	static
-../Src/Drivers/USART.cpp:377:6:void usartNameSpace::USART::sendCharNonBlockingMode(char)	16	static
-../Src/Drivers/USART.cpp:381:6:void usartNameSpace::USART::writeStringNonBlockingMode(char*)	16	static
-../Src/Drivers/USART.cpp:385:6:char usartNameSpace::USART::readCharNonBlockingMode()	16	static
-../Src/Drivers/USART.cpp:397:27:void USART1_RX_Callback()	4	static
-../Src/Drivers/USART.cpp:402:27:void USART2_RX_Callback()	4	static
-../Src/Drivers/USART.cpp:407:27:void USART6_RX_Callback()	4	static
-../Src/Drivers/USART.cpp:412:6:void USART1_IRQHandler()	16	static
-../Src/Drivers/USART.cpp:430:6:void USART2_IRQHandler()	16	static
-../Src/Drivers/USART.cpp:449:6:void USART6_IRQHandler()	16	static
+../Src/Drivers/USART.cpp:27:1:usartNameSpace::USART::USART(USART_TypeDef*)	24	static
+../Src/Drivers/USART.cpp:44:1:usartNameSpace::USART::~USART()	16	static
+../Src/Drivers/USART.cpp:50:28:defsNameSpace::TASK_STATUS usartNameSpace::USART::init()	16	static
+../Src/Drivers/USART.cpp:73:28:defsNameSpace::TASK_STATUS usartNameSpace::USART::deInit()	16	static
+../Src/Drivers/USART.cpp:77:6:void usartNameSpace::USART::peripheralClockEnable()	16	static
+../Src/Drivers/USART.cpp:95:6:void usartNameSpace::USART::setStopBits()	16	static
+../Src/Drivers/USART.cpp:99:6:void usartNameSpace::USART::setParityConfig()	16	static
+../Src/Drivers/USART.cpp:107:6:void usartNameSpace::USART::setBRRConfig()	16	static
+../Src/Drivers/USART.cpp:115:6:void usartNameSpace::USART::setInterrupts()	16	static
+../Src/Drivers/USART.cpp:128:6:void usartNameSpace::USART::setOverSampling()	16	static
+../Src/Drivers/USART.cpp:133:6:void usartNameSpace::USART::setDataLength()	16	static
+../Src/Drivers/USART.cpp:138:6:void usartNameSpace::USART::set_TX_RX_mode()	16	static
+../Src/Drivers/USART.cpp:150:6:void usartNameSpace::USART::gpioConfig()	128	static
+../Src/Drivers/USART.cpp:276:6:void usartNameSpace::USART::enableNVIC_Interrupt()	24	static
+../Src/Drivers/USART.cpp:302:6:void usartNameSpace::USART::disableNVIC_Interrupt()	24	static
+../Src/Drivers/USART.cpp:320:6:void usartNameSpace::USART::calculateMantisaAndFractionalPart(double, uint8_t, usartNameSpace::USART_BAUD_RATES, usartNameSpace::BAUD_RATE_VALUES&)	96	static
+../Src/Drivers/USART.cpp:345:6:void usartNameSpace::USART::USART_enable()	16	static
+../Src/Drivers/USART.cpp:350:6:void usartNameSpace::USART::USART_disable()	16	static
+../Src/Drivers/USART.cpp:359:6:void usartNameSpace::USART::writeCharBlockingMode(char)	16	static
+../Src/Drivers/USART.cpp:368:6:void usartNameSpace::USART::writeStringBlockingMode(char*)	16	static
+../Src/Drivers/USART.cpp:376:6:char usartNameSpace::USART::readCharBlockingMode()	16	static
+../Src/Drivers/USART.cpp:383:6:void usartNameSpace::USART::sendCharNonBlockingMode(char)	16	static
+../Src/Drivers/USART.cpp:387:6:void usartNameSpace::USART::writeStringNonBlockingMode(char*)	16	static
+../Src/Drivers/USART.cpp:391:6:char usartNameSpace::USART::readCharNonBlockingMode()	16	static
+../Src/Drivers/USART.cpp:397:6:void usartNameSpace::USART::readUserCommands(usartNameSpace::USART&)	24	static
+../Src/Drivers/USART.cpp:415:6:void usartNameSpace::USART::parseUserCommands(usartNameSpace::USART&, void*, char*)	40	static
+../Src/Drivers/USART.cpp:450:27:void USART1_RX_Callback()	4	static
+../Src/Drivers/USART.cpp:455:27:void USART2_RX_Callback()	4	static
+../Src/Drivers/USART.cpp:460:27:void USART6_RX_Callback()	4	static
+../Src/Drivers/USART.cpp:465:27:void USART1_TX_Callback()	4	static
+../Src/Drivers/USART.cpp:470:27:void USART2_TX_Callback()	4	static
+../Src/Drivers/USART.cpp:475:27:void USART6_TX_Callback()	4	static
+../Src/Drivers/USART.cpp:479:6:void USART1_IRQHandler()	16	static
+../Src/Drivers/USART.cpp:497:6:void USART2_IRQHandler()	16	static
+../Src/Drivers/USART.cpp:516:6:void USART6_IRQHandler()	16	static
