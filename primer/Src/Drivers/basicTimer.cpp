@@ -4,6 +4,21 @@
 
 using namespace timNameSpace;
 
+BASIC_TIMER_PARAMETERS_STRUCT defaultParams = {
+
+	.onePulseMode = timNameSpace::ONE_PULSE_MODE_DISABLED,
+	.counterMode = timNameSpace::TIM_UPCOUNTING_MODE,
+	.prescaler = 16000,
+	.period = 250,
+	.repetitionCounter = 0,
+	.autoReloadPrealoadEnable = timNameSpace::ARR_BUFFERED,
+	.interruptEnable = timNameSpace::INTERRUPT_ENABLE,
+	.interruptPriority = defsNameSpace::NVIC_PRIORITY_2,
+    .Fosc = 16E6,
+
+
+};
+
 basicTimer::basicTimer(TIM_TypeDef *TIMx){
 
     /*these are the steps to follow by every single library*/
@@ -12,6 +27,7 @@ basicTimer::basicTimer(TIM_TypeDef *TIMx){
     assert(ASSERT_TIM_INSTANCE(TIMx));
     this->instance = TIMx;
     resetValues = *TIMx;
+    this->parameters = defaultParams;
 
     /* assign each class's instance ptr to the asserted register_TypeDef */
     /*store the reset values */
@@ -30,21 +46,13 @@ defsNameSpace::TASK_STATUS basicTimer::init(){
 
 
     peripheralClockEnable();
-    
-
-    /* specific settings for timer 1,2,3,4,5 */
-    if(instance == TIM1){
-
-        instance->RCR = parameters.repetitionCounter;
-    }
-    if((instance != TIM9) && (instance != TIM10) && (instance != TIM11)){
-
-        instance->CR1 |= parameters.counterMode;
-    }
-    instance->CR1 |= (parameters.autoReloadPrealoadEnable | parameters.onePulseMode);
-    instance->PSC = parameters.prescaler - 1;
-    instance->ARR = parameters.period;
-    instance->DIER |= parameters.interruptEnable;
+    setRepetitionCounter(this->parameters.repetitionCounter);
+    setCounterMode(this->parameters.counterMode);
+    setARPE(this->parameters.autoReloadPrealoadEnable);
+    setOnePulseMode(this->parameters.onePulseMode);
+    setPSC(this->parameters.prescaler);
+    setAutoReloadRegister(this->parameters.period);
+    setInterrupt(this->parameters.interruptEnable);
     instance->EGR |= 1 << 0;
     instance->SR &= ~(0x1U << 0);
     if(parameters.interruptEnable == INTERRUPT_ENABLE){
@@ -76,6 +84,57 @@ void basicTimer::peripheralClockEnable(){
 
 }
 
+void basicTimer::setRepetitionCounter(uint8_t repetitionCounter)
+{
+    if(instance == TIM1)
+    {
+        this->parameters.repetitionCounter = repetitionCounter;
+        instance->RCR = repetitionCounter;
+    }
+
+}
+
+void basicTimer::setCounterMode(TIM_COUNTING_MODE countingMode)
+{
+    if((instance != TIM9) && (instance != TIM10) && (instance != TIM11)){
+
+        this->parameters.counterMode = countingMode;
+        MODIFY_REG(instance->CR1, TIM_CR1_DIR_Msk, countingMode);
+    }
+}
+void basicTimer::setAutoReloadRegister(uint32_t ARR)
+{
+    this->parameters.period = ARR;
+    this->instance->ARR = ARR;
+    instance->EGR |= TIM_EGR_UG;
+}
+void basicTimer::setOnePulseMode(TIM_ONE_PULSE_MODE_SELECTION onePulseMode)
+{
+    this->parameters.onePulseMode = onePulseMode;
+    MODIFY_REG(instance->CR1, TIM_CR1_OPM_Msk, onePulseMode);
+
+}
+
+void basicTimer::setARPE(TIM_ARPE arpe)
+{
+    this->parameters.autoReloadPrealoadEnable = arpe;
+    MODIFY_REG(instance->CR1, TIM_CR1_ARPE_Msk, arpe);
+
+}
+
+void basicTimer::setPSC(uint32_t psc)
+{
+    this->parameters.prescaler = psc;
+    this->instance->PSC = psc - 1;
+    instance->EGR |= TIM_EGR_UG;
+}
+
+void basicTimer::setInterrupt(BASIC_TIMER_UPDATE_INTERRUPT_ENABLE interrupt)
+{
+    this->parameters.interruptEnable = interrupt;
+    MODIFY_REG(this->instance->DIER, TIM_DIER_UIE_Msk, interrupt);
+
+}
 
 void basicTimer::enableNVIC_Interrupt(){
 

@@ -2,6 +2,5 @@
     "files.associations": {
         "errno.h": "c",
         "stdint.h": "c"
-    },
-    "cortex-debug.variableUseNaturalFormat": true
+    }
 }

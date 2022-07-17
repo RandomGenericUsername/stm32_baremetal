@@ -12,10 +12,10 @@ extern uint32_t _estack;
 
 extern "C"{
 
-extern int main(void);
-void Reset_Handler(void);
-void Default_Handler(void);
-extern void __libc_init_array(void);
+    extern int main(void);
+    void Reset_Handler(void);
+    void Default_Handler(void);
+    extern void __libc_init_array(void);
 
 } 
 

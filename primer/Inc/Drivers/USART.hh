@@ -1,13 +1,13 @@
 #ifndef USART_H
 #define USART_H
 
-
 #include "MACROS.h"
-#include "vector"
-#include "stdbool.h"
 #include "GPIO.hh"
 #include "DEFINITIONS.h"
+#include "stdio.h"
+#include "string.h"
 #include "stdlib.h"
+#include "stdbool.h"
 
 using namespace defsNameSpace;
 
@@ -133,13 +133,16 @@ namespace usartNameSpace
         double internalClockFrequency;
         USART_OVERSAMPLING_MODE oversampling;
         uint32_t bufferLength;
+        char terminationCharacter;
 
     };
 
-    struct BRR_VALUES{
+    struct BAUD_RATE_VALUES{
 
         uint8_t fractionalPart;
         uint32_t mantisa;
+        uint32_t actualBaudRate;
+        float baudRateErrorPercentage;
         
     };
 
@@ -160,13 +163,10 @@ namespace usartNameSpace
             void enableNVIC_Interrupt();
             void disableNVIC_Interrupt();
 
-            uint32_t actualBaudRate;
 
-            float baudRateErrorPercentage;
+            BAUD_RATE_VALUES baudRate;
 
-            BRR_VALUES baudRateRegisterValues;
-
-            void calculateMantisaAndFractionalPart(double internalClockFrequency, uint8_t over8, USART_BAUD_RATES desiredBaudRate, BRR_VALUES &mantisaAndFractionalPart);
+            void calculateMantisaAndFractionalPart(double internalClockFrequency, uint8_t over8, USART_BAUD_RATES desiredBaudRate, BAUD_RATE_VALUES &mantisaAndFractionalPart);
 
             gpioNameSpace::GPIO TX_pin;
             gpioNameSpace::GPIO RX_pin;
@@ -176,6 +176,15 @@ namespace usartNameSpace
 
             defsNameSpace::TASK_LOCK mutex;
             uint8_t usartStatus;
+
+            bool rxComplete;
+            bool txComplete;
+            bool isStringComplete;
+            uint32_t rxCount;
+            uint32_t txCount;
+            char *rxBuffer;
+            char *txBuffer;
+            void parseUserCommands(void *paramsPtr, char *paramsFormat);
 
 
         public:
@@ -187,8 +196,6 @@ namespace usartNameSpace
             USART(USART_TypeDef *instance);
             /* USART peripheral destructor */
             ~USART();
-
-            char *buffer;
 
             USART_PARAMETERS_STRUCT *settings;
             /**
@@ -203,13 +210,13 @@ namespace usartNameSpace
              */
             defsNameSpace::TASK_STATUS deInit();
 
-            void set_TX_RX_mode();
-            void setDataLength();
-            void setOverSampling();
-            void setBRRConfig();
-            void setParityConfig();
-            void setInterrupts();
-            void setStopBits();
+            void set_TX_RX_mode(USART_MODE mode);
+            void setDataLength(USART_WORD_LENGTH dataLength);
+            void setOverSampling(USART_OVERSAMPLING_MODE oversampling);
+            void setBRRConfig(BAUD_RATE_VALUES BRR);
+            void setParityConfig(USART_PARITY_SELECTION);
+            void setInterrupts(USART_RXNE_INTERRUPT_ENABLE, USART_TXE_INTERRUPT_ENABLE,USART_TXC_INTERRUPT_ENABLE);
+            void setStopBits(USART_STOP_BITS stopBits);
             void USART_enable();
             void USART_disable();
             
@@ -218,11 +225,17 @@ namespace usartNameSpace
             void writeStringBlockingMode(char *string);
             char readCharBlockingMode(void);
 
+            void readUserCommands(USART &handler);
+
             /* non blocking mode functions */
             void sendCharNonBlockingMode(char character);
             void writeStringNonBlockingMode(char *string);
+            void writeAux();
             char readCharNonBlockingMode(void);
 
+            char buffer;
+            void *paramsPtr;
+            char *paramsFormat; 
 
 
 

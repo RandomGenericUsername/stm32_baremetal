@@ -4,7 +4,7 @@
 #include "USART.hh"
 #include "MACROS.h"
 #include "ADC.hh"
-#include "Vector.hh"
+#include "string.h"
 
 gpioNameSpace::GPIO ledStatus(GPIOA);
 timNameSpace::basicTimer systemStatusTimer(TIM9);
@@ -15,17 +15,49 @@ void systemStatusTimerInit();
 void fpuInit();
 void USARTInit();
 
+char paramsFormat[4] = {'s','s','u','\0'};
+struct params
+{
+	char statusLedEnable[64] = {0};
+	char timerPeriod[64] = {0};
+	uint32_t period;
 
+};
+params *parameters = new params;
 
 int main(void){
 
 	fpuInit();
 	GPIOInit();
-	//systemStatusTimerInit();
+	systemStatusTimerInit();
 	USARTInit();
-	//systemStatusTimer.timerStart();
+	bool control = true;
+	systemStatusTimer.timerStart();
 
 	while(1){
+
+		coms.readUserCommands(coms);
+		if((strcmp(parameters->statusLedEnable, "en") == 0) && (control == false))
+		{
+			systemStatusTimer.timerStart();
+			control = true;
+		}
+		else if((strcmp(parameters->statusLedEnable, "dis") == 0) && (control == true))
+		{
+			systemStatusTimer.timerStop();
+			control = false;
+			//coms.sendCharNonBlockingMode('s');
+		}
+		if((strcmp(parameters->timerPeriod, "set") == 0) && systemStatusTimer.parameters.period != parameters->period)
+		{
+			systemStatusTimer.setAutoReloadRegister(parameters->period);
+		}
+		if((strcmp(parameters->timerPeriod, "send") == 0))
+		{
+			coms.writeStringNonBlockingMode("strinasfaf");
+			*parameters->timerPeriod = 0;
+		}
+
 
 
 	}
@@ -33,19 +65,13 @@ int main(void){
 
 void USARTInit()
 {
-	coms.settings->mode = usartNameSpace::USART_RX_MODE;
+	coms.settings->mode = usartNameSpace::USART_TXRX_MODE;
+	coms.paramsPtr = (void*)parameters;
+	coms.paramsFormat = paramsFormat;
 	coms.init();
 }
 void systemStatusTimerInit(void){
 
-	systemStatusTimer.parameters.autoReloadPrealoadEnable = timNameSpace::ARR_NOT_BUFFERED;
-	systemStatusTimer.parameters.counterMode = timNameSpace::TIM_UPCOUNTING_MODE;
-	systemStatusTimer.parameters.prescaler = 16000;
-	systemStatusTimer.parameters.period = 250;
-	systemStatusTimer.parameters.interruptEnable = timNameSpace::INTERRUPT_ENABLE;
-	systemStatusTimer.parameters.repetitionCounter = 0;
-	//systemStatusTimer.parameters.onePulseMode = timNameSpace::ONE_PULSE_MODE_ENABLED;
-	systemStatusTimer.parameters.interruptPriority = defsNameSpace::NVIC_PRIORITY_1;
 	if(systemStatusTimer.init() != defsNameSpace::OK){
 		while(1);
 	}
@@ -70,13 +96,17 @@ void TIM9_UpdateCallback(void){
 }
 void USART2_RX_Callback()
 {
-	*coms.buffer = coms.readCharBlockingMode();
-	*coms.buffer++;
+	//coms.buffer = coms.readCharNonBlockingMode();	
 
+}
+void USART2_TX_Callback()
+{
+	//coms.writeAux();
 }
 void fpuInit(void){
 
 	/*this is needed in order to use the FPU*/
 	SCB->CPACR = ((3UL << 10*2) | (3UL << 11*2)); 
 }
+
 

@@ -3,6 +3,7 @@
 
 
 #include "DEFINITIONS.h"
+#include "MACROS.h"
 #include <stddef.h>
 #include <stdint.h>
 #include "stm32f411xe.h"
@@ -45,8 +46,8 @@ namespace timNameSpace{
     
     enum TIM_COUNTING_MODE{
 
-        TIM_UPCOUNTING_MODE = ((~(0x1 << 4)) & (0x1 << 4)),
-        TIM_DOWNCOUNTING_MODE = (0x1 << 4),
+        TIM_UPCOUNTING_MODE = (uint32_t)defaultValue,
+        TIM_DOWNCOUNTING_MODE = (uint32_t)TIM_CR1_DIR,
     };
 
     enum TIM_ID{
@@ -98,34 +99,34 @@ namespace timNameSpace{
 
     enum TIM_CLOCK_DIVISION{
 
-        TIM_CLOCK_NO_DIVISION = (uint16_t)((~(0x3 << 8)) & (0x3 << 8)),
-        TIM_CLOCK_DIVISION_2 = (uint16_t)(0x01 << 8),
-        TIM_CLOCK_DIVISION_4 = (uint16_t)(0x02 << 8),
+        TIM_CLOCK_NO_DIVISION = (uint16_t)defaultValue,
+        TIM_CLOCK_DIVISION_2 = (uint16_t)TIM_CR1_CKD_0,
+        TIM_CLOCK_DIVISION_4 = (uint16_t)TIM_CR1_CKD_0,
     };
 
     enum BASIC_TIMER_UPDATE_INTERRUPT_ENABLE{
 
-        INTERRUPT_DISABLE = 0x0,
-        INTERRUPT_ENABLE = 0x1,
+        INTERRUPT_DISABLE = (uint32_t)defaultValue,
+        INTERRUPT_ENABLE = TIM_DIER_UIE,
 
     };
      
     enum TIM_ARPE{
 
-        ARR_NOT_BUFFERED = ((~(0x1 << 7)) & (0x1 << 7)),
-        ARR_BUFFERED = (0x1 << 7),
+        ARR_NOT_BUFFERED = (uint32_t)defaultValue,
+        ARR_BUFFERED = (uint32_t)TIM_CR1_ARPE,
     };
 
 
-    enum ONE_PULSE_MODE_SELECTION{
+    enum TIM_ONE_PULSE_MODE_SELECTION{
 
-        ONE_PULSE_MODE_DISABLED = ((~(0x1 << 3)) & (0x1 << 3)),
-        ONE_PULSE_MODE_ENABLED = 0x1 << 3,
+        ONE_PULSE_MODE_DISABLED = (uint32_t)defaultValue,
+        ONE_PULSE_MODE_ENABLED = (uint32_t)TIM_CR1_OPM,
     };
     
     struct BASIC_TIMER_PARAMETERS_STRUCT{
 
-        ONE_PULSE_MODE_SELECTION onePulseMode;
+        TIM_ONE_PULSE_MODE_SELECTION onePulseMode;
         TIM_COUNTING_MODE counterMode;
         uint32_t prescaler; 
         uint32_t period;
@@ -133,6 +134,7 @@ namespace timNameSpace{
         TIM_ARPE autoReloadPrealoadEnable;
         BASIC_TIMER_UPDATE_INTERRUPT_ENABLE interruptEnable;
         uint8_t interruptPriority;
+        double Fosc;
 
     };
 
@@ -165,6 +167,16 @@ namespace timNameSpace{
 
             virtual void timerStart(void);
             virtual void timerStop(void);
+
+            virtual void setRepetitionCounter(uint8_t repetitionCounter);
+            virtual void setCounterMode(TIM_COUNTING_MODE countingMode);
+            virtual void setAutoReloadRegister(uint32_t ARR);
+            virtual void setOnePulseMode(TIM_ONE_PULSE_MODE_SELECTION onePulseMode);
+            virtual void setARPE(TIM_ARPE arpe);
+            virtual void setPSC(uint32_t psc);
+            virtual void setInterrupt(BASIC_TIMER_UPDATE_INTERRUPT_ENABLE interrupt);
+
+
 
 
 

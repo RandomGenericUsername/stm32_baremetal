@@ -2,6 +2,8 @@
 #define MACROS_H
 
 #include "DEFINITIONS.h"
+#include "stdbool.h"
+
 
  #define TASK_UNLOCK(__HANDLE__)                                            \
                                   do{                                       \
