@@ -8,7 +8,7 @@ Src/main.o: ../Src/main.cpp ../Inc/Drivers/basicTimer.hh \
  ../Inc/Drivers/CMSIS/Include/mpu_armv7.h \
  ../Inc/Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h \
  ../Inc/Drivers/GPIO.hh ../Inc/Drivers/USART.hh ../Inc/Drivers/GPIO.hh \
- ../Inc/Drivers/ADC.hh
+ ../Inc/Drivers/ADC.hh ../Inc/Drivers/esp01.hh
 ../Inc/Drivers/basicTimer.hh:
 ../Inc/DEFINITIONS.h:
 ../Inc/MACROS.h:
@@ -24,3 +24,4 @@ Src/main.o: ../Src/main.cpp ../Inc/Drivers/basicTimer.hh \
 ../Inc/Drivers/USART.hh:
 ../Inc/Drivers/GPIO.hh:
 ../Inc/Drivers/ADC.hh:
+../Inc/Drivers/esp01.hh:

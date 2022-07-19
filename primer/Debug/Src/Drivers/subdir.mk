@@ -3,12 +3,14 @@ CPP_SRCS += \
 ../Src/Drivers/GPIO.cpp \
 ../Src/Drivers/ADC.cpp \
 ../Src/Drivers/USART.cpp \
+../Src/Drivers/esp01.cpp \
 
 CPP_DEPS += \
 ../Src/Drivers/basicTimer.d \
 ../Src/Drivers/GPIO.d \
 ../Src/Drivers/ADC.d \
 ../Src/Drivers/USART.d \
+../Src/Drivers/esp01.d \
 
 
 OBJS += \
@@ -16,6 +18,7 @@ OBJS += \
 ./Src/Drivers/GPIO.o \
 ./Src/Drivers/ADC.o \
 ./Src/Drivers/USART.o \
+./Src/Drivers/esp01.o \
 
 
 

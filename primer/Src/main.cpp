@@ -5,6 +5,7 @@
 #include "MACROS.h"
 #include "ADC.hh"
 #include "string.h"
+#include "esp01.hh"
 
 gpioNameSpace::GPIO ledStatus(GPIOA);
 timNameSpace::basicTimer systemStatusTimer(TIM9);
@@ -36,27 +37,28 @@ int main(void){
 
 	while(1){
 
-		coms.readUserCommands(coms);
-		if((strcmp(parameters->statusLedEnable, "en") == 0) && (control == false))
-		{
-			systemStatusTimer.timerStart();
-			control = true;
-		}
-		else if((strcmp(parameters->statusLedEnable, "dis") == 0) && (control == true))
-		{
-			systemStatusTimer.timerStop();
-			control = false;
-			//coms.sendCharNonBlockingMode('s');
-		}
-		if((strcmp(parameters->timerPeriod, "set") == 0) && systemStatusTimer.parameters.period != parameters->period)
-		{
-			systemStatusTimer.setAutoReloadRegister(parameters->period);
-		}
-		if((strcmp(parameters->timerPeriod, "send") == 0))
-		{
-			coms.writeStringNonBlockingMode("strinasfaf");
-			*parameters->timerPeriod = 0;
-		}
+		//coms.readUserCommands(coms);
+		coms.readMsgIt();
+		//if((strcmp(parameters->statusLedEnable, "en") == 0) && (control == false))
+		//{
+		//	systemStatusTimer.timerStart();
+		//	control = true;
+		//}
+		//else if((strcmp(parameters->statusLedEnable, "dis") == 0) && (control == true))
+		//{
+		//	systemStatusTimer.timerStop();
+		//	control = false;
+		//	//coms.sendCharNonBlockingMode('s');
+		//}
+		//if((strcmp(parameters->timerPeriod, "set") == 0) && systemStatusTimer.parameters.period != parameters->period)
+		//{
+		//	systemStatusTimer.setAutoReloadRegister(parameters->period);
+		//}
+		//if((strcmp(parameters->timerPeriod, "send") == 0))
+		//{
+		//	coms.sendMsgIt("s");
+		//	*parameters->timerPeriod = 0;
+		//}
 
 
 
@@ -65,7 +67,7 @@ int main(void){
 
 void USARTInit()
 {
-	coms.settings->mode = usartNameSpace::USART_TXRX_MODE;
+	coms.settings->RXTXmode = usartNameSpace::USART_TXRX_MODE;
 	coms.paramsPtr = (void*)parameters;
 	coms.paramsFormat = paramsFormat;
 	coms.init();
@@ -96,12 +98,11 @@ void TIM9_UpdateCallback(void){
 }
 void USART2_RX_Callback()
 {
-	//coms.buffer = coms.readCharNonBlockingMode();	
-
+	coms.rxItCallback();
 }
 void USART2_TX_Callback()
 {
-	//coms.writeAux();
+	coms.txItCallback();
 }
 void fpuInit(void){
 

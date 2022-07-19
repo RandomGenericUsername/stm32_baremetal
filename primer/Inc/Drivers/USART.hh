@@ -84,7 +84,7 @@ namespace usartNameSpace
         _2_stopBits = (uint32_t)(USART_CR2_STOP_1),
     };
 
-    enum USART_MODE{
+    enum USART_RXTX_MODE{
 
         USART_TX_RX_DISABLE = 0x0,
         USART_TX_MODE = 0x1U,
@@ -92,10 +92,13 @@ namespace usartNameSpace
         USART_TXRX_MODE = 0x3U,
     };
 
-    enum USART_BAUD_RATE{
 
+    enum USART_MODE
+    {
+        BLOCKING_MODE = 0x0,
+        INTERRUPT_MODE = 0x1,
+        DMA_MODE = 0x2,
     };
-
     struct USART_INTERRUPTS{
 
         USART_PARITY_INTERRUPT_ENABLE parityInterrupt;
@@ -123,7 +126,7 @@ namespace usartNameSpace
     struct USART_PARAMETERS_STRUCT{
 
         
-        USART_MODE mode;
+        USART_RXTX_MODE RXTXmode;
         USART_BAUD_RATES baudRate;
         USART_WORD_LENGTH dataLength;
         USART_PARITY_SELECTION paritiy;
@@ -134,6 +137,7 @@ namespace usartNameSpace
         USART_OVERSAMPLING_MODE oversampling;
         uint32_t bufferLength;
         char terminationCharacter;
+        USART_MODE mode;
 
     };
 
@@ -155,7 +159,6 @@ namespace usartNameSpace
         private:
 
 
-            USART_TypeDef *instance;
             USART_TypeDef resetValues;
             /* initConfig functions */
             void peripheralClockEnable();
@@ -175,8 +178,6 @@ namespace usartNameSpace
 
 
             defsNameSpace::TASK_LOCK mutex;
-            uint8_t usartStatus;
-
             bool rxComplete;
             bool txComplete;
             bool isStringComplete;
@@ -185,6 +186,11 @@ namespace usartNameSpace
             char *rxBuffer;
             char *txBuffer;
             void parseUserCommands(void *paramsPtr, char *paramsFormat);
+            void (*txCallback)();
+            void (*rxCallback)();
+            USART_TypeDef *instance;
+
+            uint8_t usartStatus;
 
 
         public:
@@ -210,7 +216,7 @@ namespace usartNameSpace
              */
             defsNameSpace::TASK_STATUS deInit();
 
-            void set_TX_RX_mode(USART_MODE mode);
+            void set_TX_RX_mode(USART_RXTX_MODE mode);
             void setDataLength(USART_WORD_LENGTH dataLength);
             void setOverSampling(USART_OVERSAMPLING_MODE oversampling);
             void setBRRConfig(BAUD_RATE_VALUES BRR);
@@ -225,19 +231,16 @@ namespace usartNameSpace
             void writeStringBlockingMode(char *string);
             char readCharBlockingMode(void);
 
-            void readUserCommands(USART &handler);
 
             /* non blocking mode functions */
-            void sendCharNonBlockingMode(char character);
-            void writeStringNonBlockingMode(char *string);
-            void writeAux();
-            char readCharNonBlockingMode(void);
+            void sendMsgIt(char *string);
+            void readMsgIt(void);
+            void rxItCallback(void);
+            void txItCallback();
 
             char buffer;
             void *paramsPtr;
             char *paramsFormat; 
-
-
 
 
 

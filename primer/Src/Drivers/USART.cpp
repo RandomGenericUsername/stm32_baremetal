@@ -5,7 +5,7 @@ using namespace usartNameSpace;
 char dataRegister;
 struct USART_PARAMETERS_STRUCT defaultSettings = 
 {   
-    .mode = USART_TXRX_MODE,
+    .RXTXmode = USART_TXRX_MODE,
     .baudRate = _115200_Bauds,
     .dataLength = _8_DataBits,
     .paritiy = parityCheckDisabled,
@@ -22,6 +22,7 @@ struct USART_PARAMETERS_STRUCT defaultSettings =
     .oversampling = oversamplingBy16,
     .bufferLength = 128,
     .terminationCharacter = '@',
+    .mode = INTERRUPT_MODE,
 };
 
 USART::USART(USART_TypeDef *instance):TX_pin(GPIOA),RX_pin(GPIOA){
@@ -63,10 +64,15 @@ defsNameSpace::TASK_STATUS USART::init(){
     setDataLength(this->settings->dataLength);
     setParityConfig(settings->paritiy);
     setBRRConfig(baudRate);
-    set_TX_RX_mode(this->settings->mode);
+    set_TX_RX_mode(this->settings->RXTXmode);
+    if(this->settings->mode == INTERRUPT_MODE)
+    {
+        settings->interrupts.RXNE_interrupt = RXNEinterruptenabled;
+        settings->interrupts.TXE_Interrupt = TXEinterruptdisabled;
+    }
     setInterrupts(this->settings->interrupts.RXNE_interrupt, this->settings->interrupts.TXE_Interrupt, settings->interrupts.TXC_interrupt);
-    this->instance->SR = 0;
     enableNVIC_Interrupt();
+    this->instance->SR = 0;
     USART_enable();
     return defsNameSpace::OK;  
 
@@ -158,14 +164,14 @@ void USART::setDataLength(USART_WORD_LENGTH dataLength)
     MODIFY_REG(instance->CR1, USART_CR1_M_Msk, settings->dataLength);
 }
 
-void USART::set_TX_RX_mode(USART_MODE mode)
+void USART::set_TX_RX_mode(USART_RXTX_MODE mode)
 {
-    settings->mode = mode;
-    if(settings->mode == USART_TX_MODE || settings->mode == USART_TXRX_MODE)
+    settings->RXTXmode = mode;
+    if(settings->RXTXmode == USART_TX_MODE || settings->RXTXmode == USART_TXRX_MODE)
     {
         MODIFY_REG(instance->CR1, USART_CR1_TE_Msk, USART_CR1_TE);
     }
-    if(settings->mode == USART_RX_MODE || settings->mode == USART_TXRX_MODE)
+    if(settings->RXTXmode == USART_RX_MODE || settings->RXTXmode == USART_TXRX_MODE)
     {
         MODIFY_REG(instance->CR1, USART_CR1_RE_Msk, USART_CR1_RE);
     }
@@ -378,8 +384,11 @@ void USART::USART_disable()
 }
 
 
-
-/* blocking mode functions */
+/* <------------------------------------------------------------------------------------------> */
+/* <------------------------------------------------------------------------------------------> */
+/* ----------------------------------------blocking mode functions ---------------------------- */
+/* <------------------------------------------------------------------------------------------> */
+/* <------------------------------------------------------------------------------------------> */
 void USART::writeCharBlockingMode(char character)
 {
     while(!(instance->SR & USART_SR_TXE))
@@ -403,62 +412,59 @@ char USART::readCharBlockingMode(void)
 }
 
 
-/* non blocking mode functions */
-void USART::sendCharNonBlockingMode(char character)
+/* <------------------------------------------------------------------------------------------> */
+/* <------------------------------------------------------------------------------------------> */
+/* ----------------------------------------non blocking mode functions ---------------------------- */
+/* <-----------------------------------------------Interrupts----------------------------------> */
+/* <------------------------------------------------------------------------------------------> */
+void USART::sendMsgIt(char *string)
 {
-
     if(this->rxComplete != true)
     {
         return;
     }
-    this->txComplete = false;
-    this->buffer = character;
+    txCount = 0;
+    txBuffer = string;
+    txComplete = false;
     setInterrupts(RXNEinterruptdisabled, TXEinterruptenabled, TXCinterruptdisabled);
 }
-void USART::writeStringNonBlockingMode(char *string)
-{
-    this->txComplete = false;
-    this->txBuffer = string;
-    setInterrupts(RXNEinterruptdisabled, TXEinterruptenabled, TXCinterruptdisabled);
-    while(*txBuffer != '\0')
-    {
 
-        sendCharNonBlockingMode(*string);
-        txBuffer++;
+void USART::txItCallback(void){
+
+    if(txBuffer[txCount] != '\0')
+    {
+        this->instance->DR = txBuffer[txCount++]; 
     }
-
+    else{
+        txComplete = true;
+        setInterrupts(RXNEinterruptenabled, TXEinterruptdisabled, TXCinterruptdisabled);
+    }
 }
-
-void USART::writeAux()
+void USART::readMsgIt()
 {
-    setInterrupts(RXNEinterruptenabled, TXEinterruptdisabled, TXCinterruptdisabled);
-    this->instance->DR = this->buffer;
-}
-
-char USART::readCharNonBlockingMode(void)
-{
-    return dataRegister;
-}
-
-void USART::readUserCommands(USART &handler)
-{
-    char currentRead = handler.buffer;
-    if(currentRead != '\0')
+    if(this->txComplete != true || rxComplete != true) 
     {
-        if(this->txComplete != true)
-        {
-            return;
-        }
-        this->rxComplete = false;
-        handler.rxBuffer[handler.rxCount++] = currentRead;
-        if(currentRead == '@')
-        {
-            handler.rxBuffer[handler.rxCount - 1] = '\0';
-            rxComplete = true;
-            handler.rxCount = 0;
-            handler.parseUserCommands(handler.paramsPtr, handler.paramsFormat);
-        }
-        handler.buffer = '\0';
+        return;
+    }
+    if(!settings->interrupts.RXNE_interrupt)
+    {
+        rxCount = 0;
+        setInterrupts(RXNEinterruptenabled, TXEinterruptdisabled, TXCinterruptdisabled);
+    }
+}
+void USART::rxItCallback(void)
+{
+    if(dataRegister != this->settings->terminationCharacter)
+    {
+        if(rxCount == 0){rxComplete = false;}
+        rxBuffer[rxCount++] = dataRegister; 
+    }
+    else
+    {
+        rxBuffer[rxCount - 1] = '\0';
+        rxCount = 0;
+        rxComplete = true;
+        this->parseUserCommands(paramsPtr, paramsFormat);
     }
 }
 

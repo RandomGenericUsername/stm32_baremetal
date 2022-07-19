@@ -6,5 +6,7 @@
 "./Src/Drivers/USART.o"
 "./Src/Drivers/ADC.o"
 "./Src/Classes/Vector.o"
+"./Src/Drivers/esp01.o"
+
 
 
