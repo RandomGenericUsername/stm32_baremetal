@@ -1,0 +1,25 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "group": "build",
+            "type": "shell",
+            "command": "cd /home/inumaki/Development/stm32BareMetalDevelopment/mainProject/Debug;make all"
+        },
+        {
+            "label": "flash",
+            "group": "build",
+            "type": "shell",
+            "command": "cd /home/inumaki/Development/stm32BareMetalDevelopment/mainProject/Debug;make flash"
+        },
+        {
+            "label": "clean project",
+            "group": "build",
+            "type": "shell",
+            "command": "cd /home/inumaki/Development/stm32BareMetalDevelopment/mainProject/Debug;make clean",
+        }
+    ]
+}
